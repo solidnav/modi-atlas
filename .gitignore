@@ -1,0 +1,8 @@
+# build/scratch
+*.pyc
+__pycache__/
+.DS_Store
+*.bak
+trips_raw.json
+rows.json
+legs.json

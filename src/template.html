@@ -1,0 +1,123 @@
+<title>The Modi Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>__STYLE__</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="goldGrad" cx="0.36" cy="0.30" r="0.72">
+    <stop offset="0" stop-color="#FFF4CC"/>
+    <stop offset="0.45" stop-color="#F2C64E"/>
+    <stop offset="1" stop-color="#B57C0E"/>
+  </radialGradient>
+</defs></svg>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">&#127759;</div>
+      <div>
+        <div class="eyebrow">Foreign visits &#183; 2014 &#8211; 2026</div>
+        <h1 class="title">The Modi Atlas</h1>
+      </div>
+    </div>
+    <div class="stats" id="stats">
+      <div class="stat"><div class="v" id="s-countries">0</div><div class="l">Countries</div></div>
+      <div class="stat"><div class="v" id="s-visits">0</div><div class="l">Country visits</div></div>
+      <div class="stat"><div class="v" id="s-days">0</div><div class="l">Days abroad</div></div>
+      <div class="stat medal"><div class="v" id="s-medals">0</div><div class="l">State honours</div></div>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+    <svg id="map" role="img" aria-label="World map of Narendra Modi's foreign visits"></svg>
+
+    <div class="legend" aria-hidden="true">
+      <div class="lg lg-dot"><span class="sw"><i></i></span>Visited stop</div>
+      <div class="lg lg-medal"><span class="sw">
+        <svg class="mico" viewBox="-11 -19 22 30" width="19" height="26"><g class="mg"></g></svg>
+      </span>State honour</div>
+      <div class="lg lg-line"><span class="sw"><span></span></span>Travel path</div>
+      <div class="lg lg-home"><span class="sw"><i></i></span>New Delhi (home)</div>
+      <div class="lg lg-future"><span class="sw"><i></i></span>Not yet reached</div>
+    </div>
+
+    <div class="zoombar">
+      <button id="zin" aria-label="Zoom in">+</button>
+      <button id="zout" aria-label="Zoom out">&#8722;</button>
+      <button id="zreset" aria-label="Reset view" style="font-size:14px">&#10530;</button>
+    </div>
+
+    <div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+
+    <div class="costbox" id="costbox" aria-live="polite">
+      <div class="cb-title">Est. cost to taxpayer
+        <span class="dot-i" id="cb-i" tabindex="0"
+          title="A rough guesstimate, NOT an official figure. Modelled from round-trip flying hours from Delhi plus days on the ground. India's government does not disclose per-trip costs.">i</span>
+      </div>
+      <div class="cb-row"><span class="cb-k">This trip</span><span class="cb-v" id="cb-trip">&#8377;0 cr</span></div>
+      <div class="cb-row cb-total-row"><span class="cb-k">All trips so far</span><span class="cb-v cb-total" id="cb-total">&#8377;0 cr</span></div>
+    </div>
+
+    <div class="medal-burst" id="medalBurst" aria-hidden="true">
+      <svg class="mico" viewBox="-11 -19 22 30" width="30" height="41"><g class="mg"></g></svg>
+      <div class="mb-txt"><span class="mb-label">State honour received</span><span class="mb-name" id="mb-name"></span></div>
+    </div>
+  </main>
+
+  <footer class="controls">
+    <div class="itinerary" id="infocard">
+      <button class="play" id="play" aria-label="Play the journey">&#9654;</button>
+      <div class="nowdate">
+        <span class="rd-date" id="dateReadout">15 Jun 2014</span>
+        <span class="rd-sub" id="progReadout">Stop 1 of 190</span>
+      </div>
+      <div class="pass">
+        <div class="pass-stub">
+          <span class="ps-trip" id="ic-trip">Visit</span>
+          <span class="ps-year" id="ic-year">2014</span>
+        </div>
+        <div class="pass-main">
+          <div class="pass-route">
+            <span class="ic-from" id="ic-from">New Delhi</span>
+            <span class="ic-arrow">&#9992;</span>
+            <span class="ic-to" id="ic-to">&#8212;</span>
+          </div>
+          <div class="pass-city" id="ic-city"></div>
+        </div>
+        <div class="pass-f"><span class="k">Dates &amp; duration</span><span class="v" id="ic-dates">&#8212;</span></div>
+        <div class="pass-medal" id="ic-medal">
+          <svg class="mico" viewBox="-11 -19 22 30" width="27" height="37"><g class="mg"></g></svg>
+          <span class="mname"><b>State honour</b><span id="ic-medal-name"></span></span>
+        </div>
+        <div class="pass-f cost"><span class="k">Cost <span class="est-tag">est.</span></span>
+          <span class="v"><span id="ic-cost">&#8212;</span>
+            <span class="dot-i" id="ic-cost-i" tabindex="0"
+              title="A rough guesstimate, NOT an official figure. India's government discloses only year-wise totals of PM foreign-travel spending, never per-trip. Modelled here from flying hours and days abroad.">i</span>
+          </span>
+        </div>
+        <div class="pass-f grow"><span class="k">Purpose</span><span class="v" id="ic-purpose">&#8212;</span></div>
+      </div>
+      <div class="speed" role="group" aria-label="Playback speed">
+        <button data-sp="1600">Slow</button>
+        <button data-sp="850" class="on">1&#215;</button>
+        <button data-sp="380">Fast</button>
+      </div>
+    </div>
+
+    <svg id="timeline" role="slider" aria-label="Timeline scrubber"
+         aria-valuemin="0" aria-valuemax="189" aria-valuenow="0" tabindex="0"></svg>
+
+    <div class="source">
+      Trips &amp; honours from Wikipedia, <i>List of international prime ministerial trips made by Narendra Modi</i>. Costs are a rough estimate &mdash; not official figures.
+    </div>
+  </footer>
+</div>
+
+<script>__D3__</script>
+<script>__TOPOJSON__</script>
+<script>
+  const TOPO = __TOPO__;
+  const VISITS = __VISITS__;
+</script>
+<script>__APP__</script>
