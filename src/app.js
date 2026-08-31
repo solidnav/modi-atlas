@@ -302,6 +302,7 @@
     const b=document.getElementById("medalBurst");
     document.getElementById("mb-name").textContent=name;
     b.classList.remove("show"); void b.offsetWidth; b.classList.add("show");
+    void b.offsetHeight;   // force iOS WebKit to paint the freshly-shown text
     if(!reduced) spawnConfetti(b);
     clearTimeout(bannerTimer); bannerTimer=setTimeout(()=> b.classList.remove("show"), 2150);
   }
