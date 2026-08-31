@@ -457,7 +457,7 @@
   const tlHead=tl.append("g").attr("class","tl-head-wrap");
   const tlHeadLine=tlHead.append("line").attr("class","tl-head");
   const tlKnob=tlHead.append("circle").attr("class","tl-knob").attr("r",7);
-  let tlW=0, tlH=74, tlPad=14, xScale=null, baseY=46;
+  let tlW=0, tlH=80, tlPad=14, xScale=null, baseY=46;
 
   function layoutTimeline(){
     tlW=document.getElementById("timeline").clientWidth||600;
@@ -473,8 +473,11 @@
       gg.append("text").attr("class","tl-yr");
       return gg;
     });
-    g.select("line").attr("x1",d=>xScale(d)).attr("x2",d=>xScale(d)).attr("y1",14).attr("y2",baseY+8);
-    g.select("text").attr("x",d=>xScale(d)+4).attr("y",baseY+20).text(d=>new Date(d).getUTCFullYear());
+    g.select("line").attr("x1",d=>xScale(d)).attr("x2",d=>xScale(d)).attr("y1",14).attr("y2",baseY);
+    // stagger the year labels up/down so they never collide on a narrow screen
+    g.select("text").attr("text-anchor","middle")
+      .attr("x",d=>xScale(d)).attr("y",(d,i)=> baseY + (i%2 ? 30 : 17))
+      .text(d=>new Date(d).getUTCFullYear());
     // ticks per visit
     const tk=tlTicks.selectAll("line.tl-tick").data(VISITS,d=>d.seq).join("line")
       .attr("class",d=> "tl-tick"+(d.award?" medal":""))

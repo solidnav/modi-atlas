@@ -222,10 +222,11 @@ body{
 }
 .ms-title{
   font-family:var(--ff-disp);font-weight:700;letter-spacing:.02em;
-  font-size:clamp(26px,4.4vw,40px);line-height:1;
-  background:linear-gradient(180deg,#F6D879,#D9931C 62%,#A9660A);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  -webkit-text-stroke:.6px rgba(120,74,8,.35);text-shadow:0 2px 0 rgba(255,255,255,.5);
+  font-size:clamp(26px,4.4vw,40px);line-height:1.02;text-wrap:balance;
+  /* solid gold: background-clip:text renders invisible on iOS WebKit inside an
+     animated (transformed) ancestor, so paint the fill directly instead */
+  color:#BE7B0E;
+  text-shadow:0 1px 0 rgba(255,255,255,.65),0 2px 3px rgba(150,100,20,.30);
 }
 .medal-splash.show .ms-title{animation:mstitle 2.1s cubic-bezier(.2,1.5,.4,1) forwards}
 @keyframes mstitle{
@@ -329,7 +330,7 @@ body{
 .source i{font-style:italic}
 
 /* timeline */
-#timeline{width:100%;height:74px;display:block;touch-action:none}
+#timeline{width:100%;height:80px;display:block;touch-action:none}
 .tl-axis{stroke:var(--line);stroke-width:1px}
 .tl-yr{font-family:var(--ff-mono);font-size:13px;fill:var(--ink-soft)}
 .tl-grid{stroke:var(--line);stroke-width:1px;opacity:.7}
@@ -402,7 +403,8 @@ body{
   .pass-medal .mname{font-size:11.5px;max-width:150px;-webkit-line-clamp:1}
   .pass-medal .mname b{display:none}
   .pass-medal .mico{width:18px;height:24px}
-  #timeline{height:56px}
+  #timeline{height:64px}
+  .tl-yr{font-size:11px}
   .source{display:none}
 }
 @media (prefers-reduced-motion:reduce){
@@ -4229,7 +4231,7 @@ body{
   const tlHead=tl.append("g").attr("class","tl-head-wrap");
   const tlHeadLine=tlHead.append("line").attr("class","tl-head");
   const tlKnob=tlHead.append("circle").attr("class","tl-knob").attr("r",7);
-  let tlW=0, tlH=74, tlPad=14, xScale=null, baseY=46;
+  let tlW=0, tlH=80, tlPad=14, xScale=null, baseY=46;
 
   function layoutTimeline(){
     tlW=document.getElementById("timeline").clientWidth||600;
@@ -4245,8 +4247,11 @@ body{
       gg.append("text").attr("class","tl-yr");
       return gg;
     });
-    g.select("line").attr("x1",d=>xScale(d)).attr("x2",d=>xScale(d)).attr("y1",14).attr("y2",baseY+8);
-    g.select("text").attr("x",d=>xScale(d)+4).attr("y",baseY+20).text(d=>new Date(d).getUTCFullYear());
+    g.select("line").attr("x1",d=>xScale(d)).attr("x2",d=>xScale(d)).attr("y1",14).attr("y2",baseY);
+    // stagger the year labels up/down so they never collide on a narrow screen
+    g.select("text").attr("text-anchor","middle")
+      .attr("x",d=>xScale(d)).attr("y",(d,i)=> baseY + (i%2 ? 30 : 17))
+      .text(d=>new Date(d).getUTCFullYear());
     // ticks per visit
     const tk=tlTicks.selectAll("line.tl-tick").data(VISITS,d=>d.seq).join("line")
       .attr("class",d=> "tl-tick"+(d.award?" medal":""))
