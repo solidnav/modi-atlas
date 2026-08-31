@@ -171,30 +171,89 @@ body{
 .est-tag{font-family:var(--ff-mono);font-size:9px;letter-spacing:.03em;color:#fff;
   background:var(--saffron-soft);padding:1px 5px;border-radius:5px;vertical-align:middle;font-weight:600}
 
-/* ---------- Medal celebration banner + FX ---------- */
+/* ---------- Medal celebration: video-game splash ---------- */
 .fx{pointer-events:none}
-.medal-burst{
-  position:absolute;left:50%;top:20px;transform:translate(-50%,-14px);z-index:30;
-  display:flex;align-items:center;gap:12px;pointer-events:none;opacity:0;
-  background:linear-gradient(180deg,#FFF7E4,#FBEBC4);border:1px solid #EBD09A;
-  border-radius:15px;padding:10px 20px 10px 15px;box-shadow:0 16px 36px -14px rgba(150,100,20,.6);
-  max-width:min(88vw,430px);
+.medal-splash{
+  position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:40;
+  pointer-events:none;opacity:0;display:grid;place-items:center;
 }
-.medal-burst.show{animation:mbpop 2.3s cubic-bezier(.2,.9,.3,1) forwards}
-@keyframes mbpop{
-  0%{opacity:0;transform:translate(-50%,-16px) scale(.7)}
-  9%{opacity:1;transform:translate(-50%,0) scale(1.07)}
-  15%{transform:translate(-50%,0) scale(1)}
-  84%{opacity:1;transform:translate(-50%,0) scale(1)}
-  100%{opacity:0;transform:translate(-50%,-8px) scale(.98)}
+.medal-splash.show{opacity:1}
+/* radiating light-burst behind the card */
+.ms-rays{
+  position:absolute;left:50%;top:50%;width:340px;height:340px;
+  transform:translate(-50%,-50%) scale(.4);opacity:0;
+  background:repeating-conic-gradient(from 0deg,
+    rgba(242,198,78,.30) 0deg 9deg, rgba(242,198,78,0) 9deg 18deg);
+  border-radius:50%;
+  -webkit-mask:radial-gradient(circle,#000 10%,rgba(0,0,0,.5) 40%,transparent 70%);
+          mask:radial-gradient(circle,#000 10%,rgba(0,0,0,.5) 40%,transparent 70%);
 }
-.medal-burst .mico{filter:drop-shadow(0 3px 5px rgba(150,100,20,.5))}
-.medal-burst.show .mico{animation:mbspin 1s ease-out}
-@keyframes mbspin{0%{transform:rotate(-24deg) scale(.5)}60%{transform:rotate(7deg) scale(1.14)}100%{transform:rotate(0) scale(1)}}
-.mb-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
-.mb-label{font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:#A9781A;font-weight:600}
-.mb-name{font-family:var(--ff-disp);font-weight:700;font-size:19px;color:var(--ink);line-height:1.1}
+.medal-splash.show .ms-rays{animation:msrays 2.1s ease-out forwards}
+@keyframes msrays{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(0)}
+  16%{opacity:1}
+  70%{opacity:.85}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.12) rotate(60deg)}
+}
+.ms-card{
+  position:relative;display:grid;justify-items:center;gap:6px;
+  padding:20px 34px 22px;border-radius:22px;
+  background:linear-gradient(180deg,rgba(255,252,244,.96),rgba(251,238,205,.94));
+  border:1.5px solid #EBCF93;box-shadow:0 26px 60px -20px rgba(150,100,20,.7);
+  transform:scale(.5);opacity:0;
+}
+.medal-splash.show .ms-card{animation:mspop 2.1s cubic-bezier(.18,1.3,.4,1) forwards}
+@keyframes mspop{
+  0%{opacity:0;transform:scale(.4)}
+  10%{opacity:1;transform:scale(1.12)}
+  18%{transform:scale(.98)}
+  24%{transform:scale(1.03)}
+  30%{transform:scale(1)}
+  82%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(.96)}
+}
+.ms-medal{filter:drop-shadow(0 6px 10px rgba(150,100,20,.55))}
+.medal-splash.show .ms-medal{animation:msmedal 1.1s cubic-bezier(.2,1.4,.4,1)}
+@keyframes msmedal{
+  0%{transform:rotate(-40deg) scale(0)}
+  55%{transform:rotate(12deg) scale(1.25)}
+  75%{transform:rotate(-4deg) scale(.95)}
+  100%{transform:rotate(0) scale(1)}
+}
+.ms-title{
+  font-family:var(--ff-disp);font-weight:700;letter-spacing:.02em;
+  font-size:clamp(26px,4.4vw,40px);line-height:1;
+  background:linear-gradient(180deg,#F6D879,#D9931C 62%,#A9660A);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:.6px rgba(120,74,8,.35);text-shadow:0 2px 0 rgba(255,255,255,.5);
+}
+.medal-splash.show .ms-title{animation:mstitle 2.1s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes mstitle{
+  0%{opacity:0;transform:translateY(14px) scale(.7)}
+  14%{opacity:1;transform:translateY(0) scale(1.06)}
+  22%{transform:translateY(0) scale(1)}
+  82%{opacity:1}
+  100%{opacity:0;transform:translateY(-6px)}
+}
+.ms-name{
+  font-family:var(--ff-ui);font-weight:600;color:var(--ink);text-align:center;line-height:1.25;
+  font-size:clamp(14px,2vw,18px);max-width:min(80vw,420px);
+}
+.medal-splash.show .ms-name{animation:msname 2.1s ease-out forwards}
+@keyframes msname{
+  0%{opacity:0;transform:translateY(8px)}
+  24%{opacity:0}
+  34%{opacity:1;transform:translateY(0)}
+  84%{opacity:1}
+  100%{opacity:0}
+}
+/* confetti pieces (spawned in JS) */
+.ms-confetti{position:absolute;left:50%;top:50%;width:9px;height:13px;border-radius:2px;
+  opacity:0;transform:translate(-50%,-50%);z-index:39;pointer-events:none}
+@keyframes msconfetti{
+  0%{opacity:1;transform:translate(-50%,-50%) rotate(0)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot))}
+}
 
 /* ---------- Footer: docked itinerary + timeline ---------- */
 .controls{
@@ -231,13 +290,14 @@ body{
   color:var(--saffron);font-weight:600;white-space:nowrap}
 .pass-stub .ps-year{font-family:var(--ff-mono);font-size:14.5px;color:var(--ink-soft)}
 .pass-main{flex:none;display:flex;flex-direction:column;justify-content:center;gap:2px;
-  padding:6px 13px;min-width:180px;max-width:240px;border-right:1px solid var(--line)}
+  padding:6px 13px;min-width:180px;max-width:min(46vw,300px);border-right:1px solid var(--line)}
 .pass-route{display:flex;align-items:baseline;gap:9px;min-width:0}
 .pass-route .ic-from{font-family:var(--ff-mono);font-size:14px;color:var(--ink-soft);
   max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:none}
 .pass-route .ic-arrow{color:var(--saffron);font-size:18px;flex:none}
 .pass-route .ic-to{font-family:var(--ff-disp);font-weight:700;font-size:24px;line-height:1.05;
-  letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  flex:1 1 auto;min-width:0}
 .pass-city{font-size:14px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pass-f{flex:none;display:flex;flex-direction:column;justify-content:center;gap:4px;
   padding:8px 13px;border-right:1px solid var(--line);min-width:0}
@@ -275,6 +335,14 @@ body{
 .tl-grid{stroke:var(--line);stroke-width:1px;opacity:.7}
 .tl-tick{stroke:var(--saffron-soft);stroke-width:1.4px}
 .tl-tick.medal{stroke:var(--gold);stroke-width:1.8px}
+/* small medal glyphs on the timeline, to show where honours cluster */
+.tl-medals{pointer-events:none}
+.tl-medal{filter:drop-shadow(0 1px 1px rgba(140,90,10,.4))}
+.tl-medal .rib-l{fill:var(--saffron)}
+.tl-medal .rib-r{fill:var(--green)}
+.tl-medal .disc{fill:url(#goldGrad);stroke:#8A5E10;stroke-width:1.4}
+.tl-medal .shine{fill:#fff;opacity:.55}
+.tl-medal .star{fill:#7A5210}
 .tl-progress{fill:rgba(232,114,28,.10)}
 .tl-head{stroke:var(--saffron);stroke-width:2px}
 .tl-knob{fill:var(--saffron);stroke:#fff;stroke-width:2px;cursor:grab}
@@ -293,13 +361,13 @@ body{
 }
 @media (max-width:640px){
   .app{min-height:0}
-  .topbar{padding:9px 13px;gap:9px}
-  .mark{width:38px;height:38px;font-size:20px}
-  .title{font-size:20px}
+  .topbar{padding:7px 12px;gap:8px}
+  .mark{width:34px;height:34px;font-size:19px}
+  .title{font-size:19px}
   .eyebrow{font-size:10px}
   .stats{width:100%;justify-content:space-between;gap:6px}
-  .stat{min-width:0;flex:1;padding:6px 5px;text-align:center}
-  .stat .v{font-size:19px}
+  .stat{min-width:0;flex:1;padding:5px 4px;text-align:center}
+  .stat .v{font-size:18px}
   .stat .l{font-size:9px;letter-spacing:.01em}
   .legend{display:none}
   .zoombar{right:10px;top:10px}
@@ -307,12 +375,15 @@ body{
   .costbox{right:10px;bottom:10px;min-width:0;padding:8px 11px}
   .cb-title{font-size:9.5px;margin-bottom:5px}
   .cb-k{font-size:11px}.cb-v{font-size:14px}.cb-total{font-size:18px}
-  .medal-burst{top:12px;gap:9px;padding:8px 14px 8px 11px}
-  .mb-name{font-size:15px}.mb-label{font-size:9.5px}
-  .medal-burst .mico{width:24px;height:33px}
+  .medal-splash{top:42%}
+  .ms-rays{width:250px;height:250px}
+  .ms-card{padding:15px 22px 17px;border-radius:18px;gap:4px}
+  .ms-medal{width:50px;height:69px}
+  .ms-title{font-size:24px}
+  .ms-name{font-size:13.5px}
 
-  .controls{padding:8px 10px 9px;gap:6px}
-  .play{width:44px;height:44px}
+  .controls{padding:7px 10px 8px;gap:5px}
+  .play{width:42px;height:42px}
   .nowdate{min-width:0;flex:none}
   .nowdate .rd-date{font-size:16px}.nowdate .rd-sub{font-size:11.5px}
   .speed{margin-left:auto}
@@ -331,12 +402,16 @@ body{
   .pass-medal .mname{font-size:11.5px;max-width:150px;-webkit-line-clamp:1}
   .pass-medal .mname b{display:none}
   .pass-medal .mico{width:18px;height:24px}
-  #timeline{height:60px}
+  #timeline{height:56px}
   .source{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms !important;transition-duration:.001ms !important}
-  .medal-burst.show{animation:none;opacity:1}
+  .medal-splash.show{opacity:1}
+  .medal-splash.show .ms-card{opacity:1;transform:none;animation:none}
+  .medal-splash.show .ms-title{opacity:1;transform:none}
+  .medal-splash.show .ms-name{opacity:1}
+  .medal-splash.show .ms-medal{transform:none;animation:none}
 }
 </style>
 
@@ -395,9 +470,13 @@ body{
       <div class="cb-row cb-total-row"><span class="cb-k">All trips so far</span><span class="cb-v cb-total" id="cb-total">&#8377;0 cr</span></div>
     </div>
 
-    <div class="medal-burst" id="medalBurst" aria-hidden="true">
-      <svg class="mico" viewBox="-11 -19 22 30" width="30" height="41"><g class="mg"></g></svg>
-      <div class="mb-txt"><span class="mb-label">State honour received</span><span class="mb-name" id="mb-name"></span></div>
+    <div class="medal-splash" id="medalBurst" aria-hidden="true">
+      <div class="ms-rays"></div>
+      <div class="ms-card">
+        <svg class="mico ms-medal" viewBox="-11 -19 22 30" width="64" height="88"><g class="mg"></g></svg>
+        <div class="ms-title">MEDAL AWARDED</div>
+        <div class="ms-name" id="mb-name"></div>
+      </div>
     </div>
   </main>
 
@@ -435,9 +514,9 @@ body{
         <div class="pass-f grow"><span class="k">Purpose</span><span class="v" id="ic-purpose">&#8212;</span></div>
       </div>
       <div class="speed" role="group" aria-label="Playback speed">
-        <button data-sp="1600">Slow</button>
-        <button data-sp="850" class="on">1&#215;</button>
-        <button data-sp="380">Fast</button>
+        <button data-sp="2600">Slow</button>
+        <button data-sp="1600" class="on">1&#215;</button>
+        <button data-sp="850">Fast</button>
       </div>
     </div>
 
@@ -530,7 +609,7 @@ body{
 {
 "year": "2014",
 "tripNum": "5",
-"country": "United States (UN, New York)",
+"country": "United States",
 "rawCountry": "United Nations",
 "city": "New York City, Washington, D.C.",
 "lon": -73.97,
@@ -938,7 +1017,7 @@ body{
 {
 "year": "2015",
 "tripNum": "2",
-"country": "United States (UN, New York)",
+"country": "United States",
 "rawCountry": "United Nations",
 "city": "New York City, San Francisco Bay Area",
 "lon": -73.97,
@@ -1023,11 +1102,11 @@ body{
 {
 "year": "2015",
 "tripNum": "18",
-"country": "United States (UN, New York)",
-"rawCountry": "United Nations",
+"country": "France",
+"rawCountry": "France",
 "city": "Paris",
-"lon": -73.97,
-"lat": 40.75,
+"lon": 2.3522,
+"lat": 48.8566,
 "start": "2015-11-28",
 "end": "2015-11-30",
 "days": 3,
@@ -1091,7 +1170,7 @@ body{
 {
 "year": "2016",
 "tripNum": "3",
-"country": "European Union (Brussels)",
+"country": "European Union",
 "rawCountry": "European Union",
 "city": "Brussels",
 "lon": 4.35,
@@ -2230,7 +2309,7 @@ body{
 {
 "year": "2019",
 "tripNum": "56",
-"country": "United States (UN, New York)",
+"country": "United States",
 "rawCountry": "United Nations",
 "city": "New York City, Houston, Chicago",
 "lon": -73.97,
@@ -2315,7 +2394,7 @@ body{
 {
 "year": "2021",
 "tripNum": "61",
-"country": "United States (UN, New York)",
+"country": "United States",
 "rawCountry": "United Nations",
 "city": "New York City, Washington, D.C.",
 "lon": -73.97,
@@ -2366,11 +2445,11 @@ body{
 {
 "year": "2021",
 "tripNum": "3",
-"country": "United States (UN, New York)",
-"rawCountry": "United Nations",
+"country": "United Kingdom",
+"rawCountry": "United Kingdom",
 "city": "Glasgow",
-"lon": -73.97,
-"lat": 40.75,
+"lon": -4.2518,
+"lat": 55.8642,
 "start": "2021-11-01",
 "end": "2021-11-02",
 "days": 2,
@@ -2604,7 +2683,7 @@ body{
 {
 "year": "2023",
 "tripNum": "2",
-"country": "United States (UN, New York)",
+"country": "United States",
 "rawCountry": "United Nations",
 "city": "New York City, Washington, D.C.",
 "lon": -73.97,
@@ -2723,11 +2802,11 @@ body{
 {
 "year": "2023",
 "tripNum": "75",
-"country": "United States (UN, New York)",
-"rawCountry": "United Nations",
+"country": "United Arab Emirates",
+"rawCountry": "United Arab Emirates",
 "city": "Dubai",
-"lon": -73.97,
-"lat": 40.75,
+"lon": 55.2708,
+"lat": 25.2048,
 "start": "2023-11-30",
 "end": "2023-12-01",
 "days": 2,
@@ -2910,7 +2989,7 @@ body{
 {
 "year": "2024",
 "tripNum": "82",
-"country": "United States (UN, New York)",
+"country": "United States",
 "rawCountry": "United Nations",
 "city": "New York City, Wilmington",
 "lon": -73.97,
@@ -3808,11 +3887,34 @@ body{
       .attr("text-anchor","middle").attr("dy",-13);
 
   // ---- zoom ----
+  let userMoved=false, suppressMove=false;
   const zoom = d3.zoom().scaleExtent([1,9])
     .on("start",()=> svg.classed("grabbing",true))
-    .on("zoom",(e)=>{ curT=e.transform; gWorld.attr("transform",curT); positionMarks(); })
+    .on("zoom",(e)=>{ curT=e.transform; gWorld.attr("transform",curT); positionMarks(); if(!suppressMove) userMoved=true; })
     .on("end",()=> svg.classed("grabbing",false));
   svg.call(zoom).on("dblclick.zoom", null);
+
+  // On a narrow (mobile) screen a 2:1 world map leaves a lot of empty ocean above
+  // and below. Frame it a little bigger so the continents fill more of the view.
+  // On desktop this is the identity transform (whole world), unchanged.
+  function homeTransform(){
+    if(W>640) return d3.zoomIdentity;
+    const b=geoPath.bounds(sphere);
+    const h0=b[1][1]-b[0][1];
+    const cx=(b[0][0]+b[1][0])/2, cy=(b[0][1]+b[1][1])/2;
+    const k=Math.max(1, Math.min(1.3, (H*0.80)/h0));
+    return d3.zoomIdentity.translate(W/2 - k*cx, H*0.46 - k*cy).scale(k);
+  }
+  function goHome(animate){
+    const t=homeTransform();
+    suppressMove=true; userMoved=false;
+    if(animate){
+      svg.transition().duration(420).call(zoom.transform,t).on("end.gh",()=>{ suppressMove=false; });
+    } else {
+      svg.call(zoom.transform,t); suppressMove=false;
+    }
+  }
+  let homeFramed=false;
 
   function screenXY(lonlat){
     const p = projection(lonlat); if(!p) return null;
@@ -3824,14 +3926,19 @@ body{
     const stage = document.getElementById("stage");
     W = stage.clientWidth; H = stage.clientHeight;
     svg.attr("viewBox",`0 0 ${W} ${H}`).attr("width",W).attr("height",H);
-    projection.fitExtent([[10,12],[W-10,H-12]], sphere);
+    const px = W<=640 ? 3 : 10, py = W<=640 ? 6 : 12;
+    projection.fitExtent([[px,py],[W-px,H-py]], sphere);
     spherePath.attr("d", geoPath(sphere));
     gratPath.attr("d", geoPath);
     countrySel.attr("d", geoPath);
     bordersPath.attr("d", geoPath);
+    // frame the map (mobile = a little bigger); keep the user's view if they moved it
+    if(!homeFramed || !userMoved) goHome(false);
+    homeFramed=true;
     positionMarks();
     if(activeIdx>=0) renderTrail(false);
     layoutTimeline();
+    fitDestination();
   }
 
   function positionMarks(){
@@ -3915,9 +4022,22 @@ body{
     if(v.award){ med.classList.add("show"); document.getElementById("ic-medal-name").textContent = v.award; }
     else med.classList.remove("show");
     activeLabel.text(v.country);
+    fitDestination();
   }
   function fmtCr(n){
     return (n>=100 ? Math.round(n) : n).toLocaleString("en-IN");
+  }
+  // shrink the destination country name until it fits the boarding-pass slot,
+  // so long names ("United Kingdom", "United Arab Emirates") never get clipped.
+  function fitDestination(){
+    const el=document.getElementById("ic-to");
+    if(!el || !el.clientWidth) return;
+    el.style.fontSize="";
+    let size=parseFloat(getComputedStyle(el).fontSize)||24;
+    const min=13; let guard=0;
+    while(el.scrollWidth>el.clientWidth+0.5 && size>min && guard<40){
+      size-=1; el.style.fontSize=size+"px"; guard++;
+    }
   }
 
   function updateReadout(){
@@ -3954,7 +4074,23 @@ body{
     const b=document.getElementById("medalBurst");
     document.getElementById("mb-name").textContent=name;
     b.classList.remove("show"); void b.offsetWidth; b.classList.add("show");
-    clearTimeout(bannerTimer); bannerTimer=setTimeout(()=> b.classList.remove("show"), 2300);
+    if(!reduced) spawnConfetti(b);
+    clearTimeout(bannerTimer); bannerTimer=setTimeout(()=> b.classList.remove("show"), 2150);
+  }
+  function spawnConfetti(host){
+    host.querySelectorAll(".ms-confetti").forEach(n=>n.remove());
+    const colors=["#E8721C","#1B7A46","#F2C64E","#FFF4CC","#D99A21","#FFFFFF"];
+    for(let i=0;i<18;i++){
+      const s=document.createElement("span"); s.className="ms-confetti";
+      s.style.setProperty("--dx",((Math.random()*2-1)*190).toFixed(0)+"px");
+      s.style.setProperty("--dy",((Math.random()*2-1)*150).toFixed(0)+"px");
+      s.style.setProperty("--rot",((Math.random()*760-380)).toFixed(0)+"deg");
+      s.style.background=colors[i%colors.length];
+      s.style.animation="msconfetti "+(0.9+Math.random()*0.5).toFixed(2)+"s cubic-bezier(.2,.7,.3,1) forwards";
+      s.style.animationDelay=(Math.random()*0.07).toFixed(3)+"s";
+      host.appendChild(s);
+    }
+    setTimeout(()=> host.querySelectorAll(".ms-confetti").forEach(n=>n.remove()), 1900);
   }
   function celebrateMedal(idx){
     const p=screenXY(VISITS[idx].lonlat); if(!p) return;
@@ -4088,6 +4224,7 @@ body{
   const tlProgress=tl.append("rect").attr("class","tl-progress").attr("x",0).attr("y",0);
   const tlGrid=tl.append("g");
   const tlTicks=tl.append("g");
+  const tlMedals=tl.append("g").attr("class","tl-medals");
   const tlAxis=tl.append("line").attr("class","tl-axis");
   const tlHead=tl.append("g").attr("class","tl-head-wrap");
   const tlHeadLine=tlHead.append("line").attr("class","tl-head");
@@ -4114,7 +4251,11 @@ body{
     const tk=tlTicks.selectAll("line.tl-tick").data(VISITS,d=>d.seq).join("line")
       .attr("class",d=> "tl-tick"+(d.award?" medal":""))
       .attr("x1",d=>xScale(d.startMs)).attr("x2",d=>xScale(d.startMs))
-      .attr("y1",d=> d.award?baseY-20:baseY-11).attr("y2",baseY);
+      .attr("y1",d=> d.award?21:baseY-11).attr("y2",baseY);
+    // a small medal glyph at each honour, so viewers see where honours cluster
+    tlMedals.selectAll("g.tl-medal").data(VISITS.filter(v=>v.award),d=>d.seq)
+      .join(enter=> enter.append("g").attr("class","tl-medal").html(MEDAL_MARKUP))
+      .attr("transform",d=> "translate("+xScale(d.startMs)+",13) scale(0.5)");
     tlProgress.attr("y",14).attr("height",baseY-14+2);
     drawTimelineHead();
   }
@@ -4143,7 +4284,7 @@ body{
   });
 
   // ---- play ----
-  let playing=false, playTimer=null, stepMs=850;
+  let playing=false, playTimer=null, stepMs=1600;
   const playBtn=document.getElementById("play");
   function play(){
     if(activeIdx>=N-1) setActive(0,false);
@@ -4175,7 +4316,7 @@ body{
   // zoom buttons
   document.getElementById("zin").addEventListener("click",()=> svg.transition().duration(250).call(zoom.scaleBy,1.6));
   document.getElementById("zout").addEventListener("click",()=> svg.transition().duration(250).call(zoom.scaleBy,1/1.6));
-  document.getElementById("zreset").addEventListener("click",()=> svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity));
+  document.getElementById("zreset").addEventListener("click",()=> goHome(true));
 
   // ---- init ----
   document.querySelectorAll("svg.mico g.mg").forEach(g=> g.innerHTML=MEDAL_MARKUP);
@@ -4183,6 +4324,8 @@ body{
   window.addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(layout,120); });
   layout();
   setActive(0,false);
+  // refit the destination text once the display font has actually loaded
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitDestination);
   // gentle intro: auto-play a few after load
   if(!reduced) setTimeout(()=>{ if(activeIdx===0 && !playing) play(); }, 900);
 })();

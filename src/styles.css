@@ -167,30 +167,89 @@ body{
 .est-tag{font-family:var(--ff-mono);font-size:9px;letter-spacing:.03em;color:#fff;
   background:var(--saffron-soft);padding:1px 5px;border-radius:5px;vertical-align:middle;font-weight:600}
 
-/* ---------- Medal celebration banner + FX ---------- */
+/* ---------- Medal celebration: video-game splash ---------- */
 .fx{pointer-events:none}
-.medal-burst{
-  position:absolute;left:50%;top:20px;transform:translate(-50%,-14px);z-index:30;
-  display:flex;align-items:center;gap:12px;pointer-events:none;opacity:0;
-  background:linear-gradient(180deg,#FFF7E4,#FBEBC4);border:1px solid #EBD09A;
-  border-radius:15px;padding:10px 20px 10px 15px;box-shadow:0 16px 36px -14px rgba(150,100,20,.6);
-  max-width:min(88vw,430px);
+.medal-splash{
+  position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:40;
+  pointer-events:none;opacity:0;display:grid;place-items:center;
 }
-.medal-burst.show{animation:mbpop 2.3s cubic-bezier(.2,.9,.3,1) forwards}
-@keyframes mbpop{
-  0%{opacity:0;transform:translate(-50%,-16px) scale(.7)}
-  9%{opacity:1;transform:translate(-50%,0) scale(1.07)}
-  15%{transform:translate(-50%,0) scale(1)}
-  84%{opacity:1;transform:translate(-50%,0) scale(1)}
-  100%{opacity:0;transform:translate(-50%,-8px) scale(.98)}
+.medal-splash.show{opacity:1}
+/* radiating light-burst behind the card */
+.ms-rays{
+  position:absolute;left:50%;top:50%;width:340px;height:340px;
+  transform:translate(-50%,-50%) scale(.4);opacity:0;
+  background:repeating-conic-gradient(from 0deg,
+    rgba(242,198,78,.30) 0deg 9deg, rgba(242,198,78,0) 9deg 18deg);
+  border-radius:50%;
+  -webkit-mask:radial-gradient(circle,#000 10%,rgba(0,0,0,.5) 40%,transparent 70%);
+          mask:radial-gradient(circle,#000 10%,rgba(0,0,0,.5) 40%,transparent 70%);
 }
-.medal-burst .mico{filter:drop-shadow(0 3px 5px rgba(150,100,20,.5))}
-.medal-burst.show .mico{animation:mbspin 1s ease-out}
-@keyframes mbspin{0%{transform:rotate(-24deg) scale(.5)}60%{transform:rotate(7deg) scale(1.14)}100%{transform:rotate(0) scale(1)}}
-.mb-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
-.mb-label{font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:#A9781A;font-weight:600}
-.mb-name{font-family:var(--ff-disp);font-weight:700;font-size:19px;color:var(--ink);line-height:1.1}
+.medal-splash.show .ms-rays{animation:msrays 2.1s ease-out forwards}
+@keyframes msrays{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(0)}
+  16%{opacity:1}
+  70%{opacity:.85}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.12) rotate(60deg)}
+}
+.ms-card{
+  position:relative;display:grid;justify-items:center;gap:6px;
+  padding:20px 34px 22px;border-radius:22px;
+  background:linear-gradient(180deg,rgba(255,252,244,.96),rgba(251,238,205,.94));
+  border:1.5px solid #EBCF93;box-shadow:0 26px 60px -20px rgba(150,100,20,.7);
+  transform:scale(.5);opacity:0;
+}
+.medal-splash.show .ms-card{animation:mspop 2.1s cubic-bezier(.18,1.3,.4,1) forwards}
+@keyframes mspop{
+  0%{opacity:0;transform:scale(.4)}
+  10%{opacity:1;transform:scale(1.12)}
+  18%{transform:scale(.98)}
+  24%{transform:scale(1.03)}
+  30%{transform:scale(1)}
+  82%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(.96)}
+}
+.ms-medal{filter:drop-shadow(0 6px 10px rgba(150,100,20,.55))}
+.medal-splash.show .ms-medal{animation:msmedal 1.1s cubic-bezier(.2,1.4,.4,1)}
+@keyframes msmedal{
+  0%{transform:rotate(-40deg) scale(0)}
+  55%{transform:rotate(12deg) scale(1.25)}
+  75%{transform:rotate(-4deg) scale(.95)}
+  100%{transform:rotate(0) scale(1)}
+}
+.ms-title{
+  font-family:var(--ff-disp);font-weight:700;letter-spacing:.02em;
+  font-size:clamp(26px,4.4vw,40px);line-height:1;
+  background:linear-gradient(180deg,#F6D879,#D9931C 62%,#A9660A);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:.6px rgba(120,74,8,.35);text-shadow:0 2px 0 rgba(255,255,255,.5);
+}
+.medal-splash.show .ms-title{animation:mstitle 2.1s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes mstitle{
+  0%{opacity:0;transform:translateY(14px) scale(.7)}
+  14%{opacity:1;transform:translateY(0) scale(1.06)}
+  22%{transform:translateY(0) scale(1)}
+  82%{opacity:1}
+  100%{opacity:0;transform:translateY(-6px)}
+}
+.ms-name{
+  font-family:var(--ff-ui);font-weight:600;color:var(--ink);text-align:center;line-height:1.25;
+  font-size:clamp(14px,2vw,18px);max-width:min(80vw,420px);
+}
+.medal-splash.show .ms-name{animation:msname 2.1s ease-out forwards}
+@keyframes msname{
+  0%{opacity:0;transform:translateY(8px)}
+  24%{opacity:0}
+  34%{opacity:1;transform:translateY(0)}
+  84%{opacity:1}
+  100%{opacity:0}
+}
+/* confetti pieces (spawned in JS) */
+.ms-confetti{position:absolute;left:50%;top:50%;width:9px;height:13px;border-radius:2px;
+  opacity:0;transform:translate(-50%,-50%);z-index:39;pointer-events:none}
+@keyframes msconfetti{
+  0%{opacity:1;transform:translate(-50%,-50%) rotate(0)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--rot))}
+}
 
 /* ---------- Footer: docked itinerary + timeline ---------- */
 .controls{
@@ -227,13 +286,14 @@ body{
   color:var(--saffron);font-weight:600;white-space:nowrap}
 .pass-stub .ps-year{font-family:var(--ff-mono);font-size:14.5px;color:var(--ink-soft)}
 .pass-main{flex:none;display:flex;flex-direction:column;justify-content:center;gap:2px;
-  padding:6px 13px;min-width:180px;max-width:240px;border-right:1px solid var(--line)}
+  padding:6px 13px;min-width:180px;max-width:min(46vw,300px);border-right:1px solid var(--line)}
 .pass-route{display:flex;align-items:baseline;gap:9px;min-width:0}
 .pass-route .ic-from{font-family:var(--ff-mono);font-size:14px;color:var(--ink-soft);
   max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:none}
 .pass-route .ic-arrow{color:var(--saffron);font-size:18px;flex:none}
 .pass-route .ic-to{font-family:var(--ff-disp);font-weight:700;font-size:24px;line-height:1.05;
-  letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  flex:1 1 auto;min-width:0}
 .pass-city{font-size:14px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pass-f{flex:none;display:flex;flex-direction:column;justify-content:center;gap:4px;
   padding:8px 13px;border-right:1px solid var(--line);min-width:0}
@@ -271,6 +331,14 @@ body{
 .tl-grid{stroke:var(--line);stroke-width:1px;opacity:.7}
 .tl-tick{stroke:var(--saffron-soft);stroke-width:1.4px}
 .tl-tick.medal{stroke:var(--gold);stroke-width:1.8px}
+/* small medal glyphs on the timeline, to show where honours cluster */
+.tl-medals{pointer-events:none}
+.tl-medal{filter:drop-shadow(0 1px 1px rgba(140,90,10,.4))}
+.tl-medal .rib-l{fill:var(--saffron)}
+.tl-medal .rib-r{fill:var(--green)}
+.tl-medal .disc{fill:url(#goldGrad);stroke:#8A5E10;stroke-width:1.4}
+.tl-medal .shine{fill:#fff;opacity:.55}
+.tl-medal .star{fill:#7A5210}
 .tl-progress{fill:rgba(232,114,28,.10)}
 .tl-head{stroke:var(--saffron);stroke-width:2px}
 .tl-knob{fill:var(--saffron);stroke:#fff;stroke-width:2px;cursor:grab}
@@ -289,13 +357,13 @@ body{
 }
 @media (max-width:640px){
   .app{min-height:0}
-  .topbar{padding:9px 13px;gap:9px}
-  .mark{width:38px;height:38px;font-size:20px}
-  .title{font-size:20px}
+  .topbar{padding:7px 12px;gap:8px}
+  .mark{width:34px;height:34px;font-size:19px}
+  .title{font-size:19px}
   .eyebrow{font-size:10px}
   .stats{width:100%;justify-content:space-between;gap:6px}
-  .stat{min-width:0;flex:1;padding:6px 5px;text-align:center}
-  .stat .v{font-size:19px}
+  .stat{min-width:0;flex:1;padding:5px 4px;text-align:center}
+  .stat .v{font-size:18px}
   .stat .l{font-size:9px;letter-spacing:.01em}
   .legend{display:none}
   .zoombar{right:10px;top:10px}
@@ -303,12 +371,15 @@ body{
   .costbox{right:10px;bottom:10px;min-width:0;padding:8px 11px}
   .cb-title{font-size:9.5px;margin-bottom:5px}
   .cb-k{font-size:11px}.cb-v{font-size:14px}.cb-total{font-size:18px}
-  .medal-burst{top:12px;gap:9px;padding:8px 14px 8px 11px}
-  .mb-name{font-size:15px}.mb-label{font-size:9.5px}
-  .medal-burst .mico{width:24px;height:33px}
+  .medal-splash{top:42%}
+  .ms-rays{width:250px;height:250px}
+  .ms-card{padding:15px 22px 17px;border-radius:18px;gap:4px}
+  .ms-medal{width:50px;height:69px}
+  .ms-title{font-size:24px}
+  .ms-name{font-size:13.5px}
 
-  .controls{padding:8px 10px 9px;gap:6px}
-  .play{width:44px;height:44px}
+  .controls{padding:7px 10px 8px;gap:5px}
+  .play{width:42px;height:42px}
   .nowdate{min-width:0;flex:none}
   .nowdate .rd-date{font-size:16px}.nowdate .rd-sub{font-size:11.5px}
   .speed{margin-left:auto}
@@ -327,10 +398,14 @@ body{
   .pass-medal .mname{font-size:11.5px;max-width:150px;-webkit-line-clamp:1}
   .pass-medal .mname b{display:none}
   .pass-medal .mico{width:18px;height:24px}
-  #timeline{height:60px}
+  #timeline{height:56px}
   .source{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms !important;transition-duration:.001ms !important}
-  .medal-burst.show{animation:none;opacity:1}
+  .medal-splash.show{opacity:1}
+  .medal-splash.show .ms-card{opacity:1;transform:none;animation:none}
+  .medal-splash.show .ms-title{opacity:1;transform:none}
+  .medal-splash.show .ms-name{opacity:1}
+  .medal-splash.show .ms-medal{transform:none;animation:none}
 }

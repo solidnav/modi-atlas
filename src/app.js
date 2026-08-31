@@ -115,11 +115,34 @@
       .attr("text-anchor","middle").attr("dy",-13);
 
   // ---- zoom ----
+  let userMoved=false, suppressMove=false;
   const zoom = d3.zoom().scaleExtent([1,9])
     .on("start",()=> svg.classed("grabbing",true))
-    .on("zoom",(e)=>{ curT=e.transform; gWorld.attr("transform",curT); positionMarks(); })
+    .on("zoom",(e)=>{ curT=e.transform; gWorld.attr("transform",curT); positionMarks(); if(!suppressMove) userMoved=true; })
     .on("end",()=> svg.classed("grabbing",false));
   svg.call(zoom).on("dblclick.zoom", null);
+
+  // On a narrow (mobile) screen a 2:1 world map leaves a lot of empty ocean above
+  // and below. Frame it a little bigger so the continents fill more of the view.
+  // On desktop this is the identity transform (whole world), unchanged.
+  function homeTransform(){
+    if(W>640) return d3.zoomIdentity;
+    const b=geoPath.bounds(sphere);
+    const h0=b[1][1]-b[0][1];
+    const cx=(b[0][0]+b[1][0])/2, cy=(b[0][1]+b[1][1])/2;
+    const k=Math.max(1, Math.min(1.3, (H*0.80)/h0));
+    return d3.zoomIdentity.translate(W/2 - k*cx, H*0.46 - k*cy).scale(k);
+  }
+  function goHome(animate){
+    const t=homeTransform();
+    suppressMove=true; userMoved=false;
+    if(animate){
+      svg.transition().duration(420).call(zoom.transform,t).on("end.gh",()=>{ suppressMove=false; });
+    } else {
+      svg.call(zoom.transform,t); suppressMove=false;
+    }
+  }
+  let homeFramed=false;
 
   function screenXY(lonlat){
     const p = projection(lonlat); if(!p) return null;
@@ -131,14 +154,19 @@
     const stage = document.getElementById("stage");
     W = stage.clientWidth; H = stage.clientHeight;
     svg.attr("viewBox",`0 0 ${W} ${H}`).attr("width",W).attr("height",H);
-    projection.fitExtent([[10,12],[W-10,H-12]], sphere);
+    const px = W<=640 ? 3 : 10, py = W<=640 ? 6 : 12;
+    projection.fitExtent([[px,py],[W-px,H-py]], sphere);
     spherePath.attr("d", geoPath(sphere));
     gratPath.attr("d", geoPath);
     countrySel.attr("d", geoPath);
     bordersPath.attr("d", geoPath);
+    // frame the map (mobile = a little bigger); keep the user's view if they moved it
+    if(!homeFramed || !userMoved) goHome(false);
+    homeFramed=true;
     positionMarks();
     if(activeIdx>=0) renderTrail(false);
     layoutTimeline();
+    fitDestination();
   }
 
   function positionMarks(){
@@ -222,9 +250,22 @@
     if(v.award){ med.classList.add("show"); document.getElementById("ic-medal-name").textContent = v.award; }
     else med.classList.remove("show");
     activeLabel.text(v.country);
+    fitDestination();
   }
   function fmtCr(n){
     return (n>=100 ? Math.round(n) : n).toLocaleString("en-IN");
+  }
+  // shrink the destination country name until it fits the boarding-pass slot,
+  // so long names ("United Kingdom", "United Arab Emirates") never get clipped.
+  function fitDestination(){
+    const el=document.getElementById("ic-to");
+    if(!el || !el.clientWidth) return;
+    el.style.fontSize="";
+    let size=parseFloat(getComputedStyle(el).fontSize)||24;
+    const min=13; let guard=0;
+    while(el.scrollWidth>el.clientWidth+0.5 && size>min && guard<40){
+      size-=1; el.style.fontSize=size+"px"; guard++;
+    }
   }
 
   function updateReadout(){
@@ -261,7 +302,23 @@
     const b=document.getElementById("medalBurst");
     document.getElementById("mb-name").textContent=name;
     b.classList.remove("show"); void b.offsetWidth; b.classList.add("show");
-    clearTimeout(bannerTimer); bannerTimer=setTimeout(()=> b.classList.remove("show"), 2300);
+    if(!reduced) spawnConfetti(b);
+    clearTimeout(bannerTimer); bannerTimer=setTimeout(()=> b.classList.remove("show"), 2150);
+  }
+  function spawnConfetti(host){
+    host.querySelectorAll(".ms-confetti").forEach(n=>n.remove());
+    const colors=["#E8721C","#1B7A46","#F2C64E","#FFF4CC","#D99A21","#FFFFFF"];
+    for(let i=0;i<18;i++){
+      const s=document.createElement("span"); s.className="ms-confetti";
+      s.style.setProperty("--dx",((Math.random()*2-1)*190).toFixed(0)+"px");
+      s.style.setProperty("--dy",((Math.random()*2-1)*150).toFixed(0)+"px");
+      s.style.setProperty("--rot",((Math.random()*760-380)).toFixed(0)+"deg");
+      s.style.background=colors[i%colors.length];
+      s.style.animation="msconfetti "+(0.9+Math.random()*0.5).toFixed(2)+"s cubic-bezier(.2,.7,.3,1) forwards";
+      s.style.animationDelay=(Math.random()*0.07).toFixed(3)+"s";
+      host.appendChild(s);
+    }
+    setTimeout(()=> host.querySelectorAll(".ms-confetti").forEach(n=>n.remove()), 1900);
   }
   function celebrateMedal(idx){
     const p=screenXY(VISITS[idx].lonlat); if(!p) return;
@@ -395,6 +452,7 @@
   const tlProgress=tl.append("rect").attr("class","tl-progress").attr("x",0).attr("y",0);
   const tlGrid=tl.append("g");
   const tlTicks=tl.append("g");
+  const tlMedals=tl.append("g").attr("class","tl-medals");
   const tlAxis=tl.append("line").attr("class","tl-axis");
   const tlHead=tl.append("g").attr("class","tl-head-wrap");
   const tlHeadLine=tlHead.append("line").attr("class","tl-head");
@@ -421,7 +479,11 @@
     const tk=tlTicks.selectAll("line.tl-tick").data(VISITS,d=>d.seq).join("line")
       .attr("class",d=> "tl-tick"+(d.award?" medal":""))
       .attr("x1",d=>xScale(d.startMs)).attr("x2",d=>xScale(d.startMs))
-      .attr("y1",d=> d.award?baseY-20:baseY-11).attr("y2",baseY);
+      .attr("y1",d=> d.award?21:baseY-11).attr("y2",baseY);
+    // a small medal glyph at each honour, so viewers see where honours cluster
+    tlMedals.selectAll("g.tl-medal").data(VISITS.filter(v=>v.award),d=>d.seq)
+      .join(enter=> enter.append("g").attr("class","tl-medal").html(MEDAL_MARKUP))
+      .attr("transform",d=> "translate("+xScale(d.startMs)+",13) scale(0.5)");
     tlProgress.attr("y",14).attr("height",baseY-14+2);
     drawTimelineHead();
   }
@@ -450,7 +512,7 @@
   });
 
   // ---- play ----
-  let playing=false, playTimer=null, stepMs=850;
+  let playing=false, playTimer=null, stepMs=1600;
   const playBtn=document.getElementById("play");
   function play(){
     if(activeIdx>=N-1) setActive(0,false);
@@ -482,7 +544,7 @@
   // zoom buttons
   document.getElementById("zin").addEventListener("click",()=> svg.transition().duration(250).call(zoom.scaleBy,1.6));
   document.getElementById("zout").addEventListener("click",()=> svg.transition().duration(250).call(zoom.scaleBy,1/1.6));
-  document.getElementById("zreset").addEventListener("click",()=> svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity));
+  document.getElementById("zreset").addEventListener("click",()=> goHome(true));
 
   // ---- init ----
   document.querySelectorAll("svg.mico g.mg").forEach(g=> g.innerHTML=MEDAL_MARKUP);
@@ -490,6 +552,8 @@
   window.addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(layout,120); });
   layout();
   setActive(0,false);
+  // refit the destination text once the display font has actually loaded
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitDestination);
   // gentle intro: auto-play a few after load
   if(!reduced) setTimeout(()=>{ if(activeIdx===0 && !playing) play(); }, 900);
 })();
