@@ -170,10 +170,11 @@ body{
 /* ---------- Medal celebration: video-game splash ---------- */
 .fx{pointer-events:none}
 .medal-splash{
-  /* fixed (not absolute-in-stage) so the card is never clipped by the map's
-     overflow:hidden, and always centred in view */
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;
-  pointer-events:none;opacity:0;display:grid;place-items:center;
+  /* full-screen fixed overlay, centred with grid. NO transform on this element
+     or the card: HTML text inside a transform-animated element fails to paint on
+     iOS WebKit (the medal is SVG, so it survived - the text did not). */
+  position:fixed;inset:0;z-index:40;
+  display:grid;place-items:center;pointer-events:none;opacity:0;
 }
 .medal-splash.show{opacity:1}
 /* radiating light-burst behind the card */
@@ -198,17 +199,14 @@ body{
   padding:20px 34px 22px;border-radius:22px;
   background:linear-gradient(180deg,rgba(255,252,244,.96),rgba(251,238,205,.94));
   border:1.5px solid #EBCF93;box-shadow:0 26px 60px -20px rgba(150,100,20,.7);
-  transform:scale(.5);opacity:0;
+  opacity:0;   /* opacity-only reveal - no transform, so WebKit paints the text */
 }
-.medal-splash.show .ms-card{animation:mspop 2.1s cubic-bezier(.18,1.3,.4,1) forwards}
+.medal-splash.show .ms-card{animation:mspop 2.1s ease-out forwards}
 @keyframes mspop{
-  0%{opacity:0;transform:scale(.4)}
-  10%{opacity:1;transform:scale(1.12)}
-  18%{transform:scale(.98)}
-  24%{transform:scale(1.03)}
-  30%{transform:scale(1)}
-  82%{opacity:1;transform:scale(1)}
-  100%{opacity:0;transform:scale(.96)}
+  0%{opacity:0}
+  8%{opacity:1}
+  82%{opacity:1}
+  100%{opacity:0}
 }
 .ms-medal{filter:drop-shadow(0 6px 10px rgba(150,100,20,.55))}
 .medal-splash.show .ms-medal{animation:msmedal 1.1s cubic-bezier(.2,1.4,.4,1)}
@@ -229,11 +227,10 @@ body{
 }
 .medal-splash.show .ms-title{animation:mstitle 2.1s cubic-bezier(.2,1.5,.4,1) forwards}
 @keyframes mstitle{
-  0%{opacity:0;transform:translateY(14px) scale(.7)}
-  14%{opacity:1;transform:translateY(0) scale(1.06)}
-  22%{transform:translateY(0) scale(1)}
+  0%{opacity:0}
+  16%{opacity:1}
   82%{opacity:1}
-  100%{opacity:0;transform:translateY(-6px)}
+  100%{opacity:0}
 }
 .ms-name{
   font-family:var(--ff-ui);font-weight:600;color:var(--ink);text-align:center;line-height:1.25;
@@ -241,9 +238,9 @@ body{
 }
 .medal-splash.show .ms-name{animation:msname 2.1s ease-out forwards}
 @keyframes msname{
-  0%{opacity:0;transform:translateY(8px)}
+  0%{opacity:0}
   24%{opacity:0}
-  34%{opacity:1;transform:translateY(0)}
+  34%{opacity:1}
   84%{opacity:1}
   100%{opacity:0}
 }
@@ -381,7 +378,6 @@ body{
   .costbox{right:10px;bottom:10px;min-width:0;padding:8px 11px}
   .cb-title{font-size:9.5px;margin-bottom:5px}
   .cb-k{font-size:11px}.cb-v{font-size:14px}.cb-total{font-size:18px}
-  .medal-splash{top:42%}
   .ms-rays{width:250px;height:250px}
   .ms-card{padding:15px 22px 17px;border-radius:18px;gap:4px}
   .ms-medal{width:50px;height:69px}
