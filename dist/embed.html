@@ -4201,6 +4201,7 @@ body{
 
   // scrub to an arbitrary date (continuous)
   function scrubTo(ms){
+    if(!isFinite(ms)) return;   // ignore a bad coordinate instead of poisoning state
     playHeadMs=Math.max(T0,Math.min(T1,ms));
     const cnt=visitedCount(playHeadMs);
     const idx=Math.max(0,cnt-1);
@@ -4281,10 +4282,18 @@ body{
     tlKnob.attr("cx",x).attr("cy",baseY+2);
     tlProgress.attr("x",tlPad).attr("width",Math.max(0,x-tlPad));
   }
-  // drag / click on timeline
+  // drag / click on timeline. d3-drag hands us a TouchEvent on touch devices,
+  // whose clientX is undefined (the coordinate is in changedTouches) - so read
+  // the touch point explicitly, otherwise the scrub math becomes NaN.
   function msFromEvent(ev){
     const rect=document.getElementById("timeline").getBoundingClientRect();
-    const px=(ev.clientX-rect.left)*(tlW/rect.width);
+    let cx = ev && ev.clientX;
+    if(cx==null && ev){
+      const t=(ev.changedTouches&&ev.changedTouches[0])||(ev.touches&&ev.touches[0]);
+      if(t) cx=t.clientX;
+    }
+    if(cx==null || !rect.width) return NaN;
+    const px=(cx-rect.left)*(tlW/rect.width);
     return xScale.invert(Math.max(tlPad,Math.min(tlW-tlPad,px)));
   }
   const tlDrag=d3.drag()
