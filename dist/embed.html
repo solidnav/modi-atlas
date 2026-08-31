@@ -174,7 +174,9 @@ body{
 /* ---------- Medal celebration: video-game splash ---------- */
 .fx{pointer-events:none}
 .medal-splash{
-  position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:40;
+  /* fixed (not absolute-in-stage) so the card is never clipped by the map's
+     overflow:hidden, and always centred in view */
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;
   pointer-events:none;opacity:0;display:grid;place-items:center;
 }
 .medal-splash.show{opacity:1}
@@ -224,8 +226,9 @@ body{
   font-family:var(--ff-disp);font-weight:700;letter-spacing:.02em;
   font-size:clamp(26px,4.4vw,40px);line-height:1.02;text-wrap:balance;
   /* solid gold: background-clip:text renders invisible on iOS WebKit inside an
-     animated (transformed) ancestor, so paint the fill directly instead */
-  color:#BE7B0E;
+     animated (transformed) ancestor, so paint the fill directly instead.
+     -webkit-text-fill-color is set explicitly to override any inherited value. */
+  color:#BE7B0E;-webkit-text-fill-color:#BE7B0E;
   text-shadow:0 1px 0 rgba(255,255,255,.65),0 2px 3px rgba(150,100,20,.30);
 }
 .medal-splash.show .ms-title{animation:mstitle 2.1s cubic-bezier(.2,1.5,.4,1) forwards}
